@@ -79,7 +79,9 @@
         <div class="dash-grid">
 
             <div class="dash-topbar">
-                <h3>currentuser@gmail.com</h3>
+                @if (NULL != Auth::user())
+                <h3>{{ Auth::user()->email }} {{ Auth::user()->name }}</h3>
+                @endif
             </div>
 
             <div class="dash-sidebar">
@@ -91,13 +93,22 @@
                 <ul>
                     <li><a href="/">Menu</a></li>
                     <li><a href="/orders">Orders</a></li>
+                    @auth
                     <li><a href="/products">Products</a></li>
                     <li><a href="/customers">Customers</a></li>
                     <li><a href="/purchases">Purchases</a></li>
                     <li><a href="/inventory">Inventory</a></li>
                     <li><a href="/users">Users</a></li>
                     <li><a href="/settings">Settings</a></li>
+                    @endauth
                 </ul>
+
+                 @auth
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit">Logout</button>
+                    </form>
+                @endauth
 
             </div>
 
