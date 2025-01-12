@@ -44,6 +44,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/inventory', [DashController::class, 'inventoryIndex'])->name('inventory');
     Route::get('/audit', [DashController::class, 'audit'])->name('audit');
     Route::post('/stock-audit', [StockController::class, 'stockAudit'])->name('stock-audit');
+    Route::post('/purchase', [StockController::class, 'purchase'])->name('purchase');
 
     // Category routes
     Route::post('/category', [CategoryController::class, 'store' ] )->name('category');

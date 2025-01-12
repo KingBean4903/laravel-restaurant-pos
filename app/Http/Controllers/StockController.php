@@ -12,6 +12,47 @@ use Carbon\Carbon;
 class StockController extends Controller
 {
     //
+
+    public function purchase(Request $request) {
+
+        try { 
+
+            $validated = $request->validate([
+                'product' => 'required|string',
+                'payment' => 'required|string',
+                'supplier' => 'required|string',
+                'qtty'=> 'required|integer',
+                'location' => 'required|string',
+                'ref' => 'required|string'
+            ]);
+
+            $stock = Stock::where('product_id', $validated['product'])->first();
+            
+            StockTrxn::create([
+                'qtty' => $validated['qtty'],
+                'stock_before' => $stock->in_stock,
+                'stock_after' => $stock->in_stock += $validated['qtty'],
+                'reason' => 'Purchase',
+                'trxn_type' => 'purchase',
+                'ref_code' => $validated['ref']."/".$validated['supplier']."/".$validated['payment'],
+                'product_id' => $validated['product'],
+                'user' => Auth::user()->id,
+            ]);
+
+            $stock->in_stock += $validated['qtty'];
+            $stock->location = $validated['location'];
+            $stock->save();
+
+            return response()->json(['Success' => 'Created purchase'], 200);
+
+        } catch(Exception $e) {
+
+            return response()->json(['Error' => $e->getMessage()], 500);
+
+        }
+
+    }
+
     public function transfer(Request $request) {
 
         try {

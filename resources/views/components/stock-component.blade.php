@@ -66,6 +66,68 @@
             </div>
         </div>
 
+        <div class="modal" id="purchase-modal">
+            <div class="modal-content" >
+                
+                <div class="modal-title">
+                    <h3>Purchase</h3>
+                    <button class="" onclick="togglePModal()">Close</button>
+                </div>
+
+                <div class="modal-body">
+                
+                        <div class="input-box">
+                            <label>Product</label>
+                            <select id="p-product">
+                                @foreach($products as $dpt)
+                                    <option value={{ $dpt->id }}>{{ $dpt->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="input-box">
+                            <label>Qtty</label>
+                            <input type="number" id="p-qtty" />
+                        </div>
+
+                        <div class="input-box">
+                            <label>Location</label>
+                            <select id="p-location">
+                                @foreach($departments as $dpt)
+                                    <option>{{ $dpt->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="input-box">
+                            <label>Reference</label>
+                            <input type="text" id="p-reference" />
+                        </div>
+
+                        <div class="input-box">
+                            <label>Supplier</label>
+                            <input type="text" id="p-supplier" />
+                        </div>
+
+                        <div class="input-box">
+                            <label>Payment</label>
+                            <select id="p-payment">
+                                <option value="CASH">CASH</option>
+                                <option value="CREDIT">CREDIT</option>
+                                <option value="MPESA">MPESA</option>
+                            </select>
+                        </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="" onclick="togglePModal()">Cancel</button>
+                    <button class="" onclick="purchase()">Submit</button>
+                </div>
+
+            </div>
+        </div>
+
         <div class="dash-grid">
 
             <div class="dash-topbar">
@@ -98,8 +160,11 @@
 
                     <div class="dash-datatable-titlebar">
                         <h2>Inventory</h2>
+                        <button type="button" onclick="togglePModal()">
+                            Add
+                        </button>
                         <button type="button" onclick="toggleModal()">
-                            ADD
+                            Transfer
                         </button>
                         <a href="/audit">Stock Audit</a>
                     </div>
@@ -151,9 +216,14 @@
         <script>
             
             const modal = document.getElementById("user-modal");
+            const pModal = document.getElementById("purchase-modal");
 
             function toggleModal() {
                 modal.classList.toggle("user-modal-active")
+            }
+
+            function togglePModal() {
+                pModal.classList.toggle("user-modal-active")
             }
 
         </script>
@@ -172,6 +242,39 @@
                             'X-CSRF-TOKEN': '{{ csrf_token() }}'
                         },
                         body: JSON.stringify({ from, to, qtty, product_id })
+                    })
+                    .then(response =>  toggleModal() )
+                    .then(data => {
+                        document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                    
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        </script>
+
+        <script>
+            function purchase() {
+                const pRef = document.getElementById('p-reference').value;
+                const pLocation = document.getElementById('p-location').value;
+                const pQtty = document.getElementById('p-qtty').value;
+                const pProduct = document.getElementById('p-product').value;
+                const pPayment = document.getElementById('p-payment').value;
+                const pSupplier = document.getElementById('p-supplier').value;
+
+                fetch('/purchase', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            ref: pRef,
+                            location: pLocation,
+                            qtty: pQtty,
+                            product: pProduct,
+                            payment: pPayment,
+                            supplier: pSupplier,
+                         })
                     })
                     .then(response =>  toggleModal() )
                     .then(data => {
