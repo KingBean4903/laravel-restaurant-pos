@@ -7,6 +7,11 @@ use App\Models\Category;
 use App\Models\Department;
 use App\Models\Product;
 use App\Models\Customer;
+use App\Models\User;
+use App\Models\Stock;
+use App\Models\StockAudit;
+use Illuminate\Support\Facades\DB;
+
 
 class DashController extends Controller
 {
@@ -17,10 +22,20 @@ class DashController extends Controller
         $products = Product::all();
         $departments = Department::all();
 
+        $audits = DB::table('stock_audits')
+            ->join('products', 'stock_audits.product_id',  '=', 'products.id')
+            ->join('users', 'stock_audits.user', '=', 'users.id')
+            ->select('stock_audits.id', 'stock_audits.location', 'stock_audits.product_id', 
+                    'stock_audits.spoilage','stock_audits.created_at', 'users.name',
+                    'stock_audits.user',
+                     'stock_audits.physical_qtty', 'products.title')
+            ->get();
+
         return view('components.stock-audit', 
         [
             'products' => $products,
             'departments' => $departments,
+            'audits' => $audits,
         ]);
     }
 
@@ -46,18 +61,25 @@ class DashController extends Controller
         
         $categories = Category::all();
         $departments = Department::all();
+        $products = Product::all();
 
         return view('components.products-component',
                 [ 
                     'categories' => $categories,
                     'departments' => $departments,
+                    'products' => $products,
                  ]);
     
     }
 
     // customersIndex:  load customers page
     function customersIndex() {
-        return view('components.customers-component');
+
+        $customers = Customer::all();
+
+        return view('components.customers-component',[
+            'customers' => $customers,
+        ]);
     }
 
     // settingsIndex:  load settings page
@@ -76,7 +98,13 @@ class DashController extends Controller
 
     // usersIndex:  load settings page
     function usersIndex() {
-        return view('components.users');
+        
+        $users = User::all();
+
+        return view('components.users',
+                [
+                    'users' => $users,
+                ]);
     }
 
     // inventoryIndex:  load inventory page
@@ -85,11 +113,20 @@ class DashController extends Controller
         $categories = Category::all();
         $departments = Department::all();
         $products = Product::all();
+        $stocks = Stock::all();
+
+
+        $stocksJoin = DB::table('stocks')
+            ->join('products', 'stocks.product_id',  '=', 'products.id')
+            ->select(
+                'stocks.id', 'stocks.location', 'stocks.product_id', 'stocks.in_stock', 'products.title')
+            ->get();
 
         return view('components.stock-component',[
             'products' => $products,
             'categories' => $categories,
-            'departments' => $departments
+            'departments' => $departments,
+            'stocks' => $stocksJoin,
         ]);
     }
 

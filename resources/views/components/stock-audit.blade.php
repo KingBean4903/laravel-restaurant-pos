@@ -80,17 +80,21 @@
                             <th>Date/Time </th>
                             <th>Product</th>
                             <th>Auditor</th>
-                            <th>Purchase</th>
-                            <th>Transfers</th>
-                            <th>Opening Stock</th>
                             <th>Physical Stock</th>
-                            <th>Instock</th>
                             <th>Spoilage</th>
-                            <th>Variance</th>
-                            
+                            <th>Location</th>
                         </thead>
                         <tbody>
-
+                            @foreach ($audits as $audit)
+                                <tr>
+                                    <td>{{ $audit->created_at }}</td>
+                                    <td>{{ $audit->title }}</td>
+                                    <td>{{ $audit->name }}</td>
+                                    <td>{{ $audit->physical_qtty }}</td>
+                                    <td>{{ $audit->spoilage }}</td>
+                                    <td>{{ $audit->location }}</td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
                     <div class="stock-audit">

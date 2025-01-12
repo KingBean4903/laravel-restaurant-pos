@@ -128,6 +128,49 @@
             </div>
         </div>
 
+        <div class="modal" id="adj-modal">
+            <div class="modal-content" >
+                
+                <div class="modal-title">
+                    <h3>Adjust Stock</h3>
+                    <button class="" onclick="toggleAdjModal()">Close</button>
+                </div>
+
+                <div class="modal-body">
+                
+                        <div class="input-box">
+                            <label>Product</label>
+                            <select id="adj_product" disabled>
+                                @foreach($products as $dpt)
+                                    <option value={{ $dpt->id }}>{{ $dpt->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        <div class="input-box">
+                            <label>Qtty</label>
+                            <input type="number" id="adj_qtty" />
+                        </div>
+
+                        <div class="input-box">
+                            <label>Location</label>
+                            <select id="adj_location" disabled>
+                                @foreach($departments as $dpt)
+                                    <option>{{ $dpt->title }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        
+                </div>
+
+                <div class="modal-footer">
+                    <button class="" onclick="toggleAdjModal()">Cancel</button>
+                    <button class="" onclick="adjustModal()">Submit</button>
+                </div>
+
+            </div>
+        </div>
+
         <div class="dash-grid">
 
             <div class="dash-topbar">
@@ -193,17 +236,27 @@
 
                     <table> 
                         <thead>
-                            <th>Order Date </th>
-                            <th>Order No</th>
-                            <th>Customer</th>
-                            <th>Payment</th>
-                            <th>Dine</th>
-                            <th>Status</th>
-                            <th>Cashier</th>
-                            <th>Total</th>
+                            <th>SKU</th>
+                            <th>Product</th>
+                            <th>In Stock</th>
+                            <th>Purchases</th>
+                            <th>Transfers</th>
+                            <th>Spoilage</th>
+                            <th>Location</th>
+                            <th>Action</th>
                         </thead>
                         <tbody>
-
+                            @foreach ($stocks as $stock)
+                                <tr>
+                                    <td>{{ substr($stock->product_id, 0, 8) }}</td>
+                                    <td> {{ $stock->title }}  </td>
+                                    <td> {{ $stock->in_stock }}</td>
+                                    <td> {{ $stock->location }}</td>
+                                    <td> 
+                                        <button type="button" onclick="openAdjModal({{ Js::from($stock)  }})">Edit</button>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
 
@@ -212,6 +265,17 @@
             </div>
 
         </div>
+
+        <script>    
+
+            var products = {{ Js::from($products)  }};
+
+            function fetchProduct(id) {
+
+               return products.filter(item => item.id == id)[0].title;
+            }
+
+        </script>
 
         <script>
             
@@ -284,6 +348,51 @@
                     .catch(error => console.error('Error:', error));
             }
         </script>
+
+        <script>
+            const adjModal = document.getElementById("adj-modal");
+
+            let stockId = ""
+
+            function toggleAdjModal() {
+                adjModal.classList.toggle("adj-modal-active");
+            }
+
+            function openAdjModal(stock) {
+                toggleAdjModal();
+                stockId = stock.id;
+                document.getElementById('adj_product').value = stock.product_id;
+                document.getElementById('adj_qtty').value = stock.in_stock;
+                document.getElementById('adj_location').value = stock.location;
+            }
+
+            function adjustModal() {
+
+               const product= document.getElementById('adj_product').value;
+               const qtty =  parseInt(document.getElementById('adj_qtty').value);
+               const location = document.getElementById('adj_location').value;
+
+                fetch(`/adjustment/${stockId}`, {
+                        method: 'PUT',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({
+                            qtty: qtty
+                         })
+                    })
+                    .then(response => {}  )
+                    .then(data => {
+                        document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                    
+                    })
+                    .catch(error => console.error('Error:', error));
+
+            }
+
+        </script>
+
     
     </body>
 </html>

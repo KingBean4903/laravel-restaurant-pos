@@ -1,3 +1,6 @@
+:root {
+    --primary-font: "Montserrat", serif;
+}
 body {
     margin: 0;
     padding: 0;
@@ -5,7 +8,7 @@ body {
 }
 
 .dash-grid {
-
+    font-family:"Montserrat", sans-serif;
     display: grid;
     grid-template-rows: 8vh 92vh;
     grid-template-columns: 15vw 85vw;
@@ -315,4 +318,42 @@ body {
 
 .cart-rmv-btn {
     margin-right: 1em;
+}
+
+table {
+    width: 100%;
+}
+
+table thead th {
+    font-size: .75em;
+    background: #fff;
+    padding: .85em 1.5em;
+    font-weight: 600;
+    color: #424242;
+    text-align: start;
+    text-transform: uppercase;
+}
+
+table tbody tr  {
+    background: #fff;
+    padding: .85em;
+}
+
+table tbody tr  td {
+    background: #fff;
+    padding: .85em;
+    color: #424242;
+    font-size: .875em;
+    text-transform: uppercase;
+}
+
+.update-user-modal {
+    display: flex;
+}
+.update-product-modal-active {
+    display: flex;
+}
+
+.adj-modal-active {
+    display: flex;
 }

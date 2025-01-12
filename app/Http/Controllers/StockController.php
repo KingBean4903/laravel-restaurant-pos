@@ -138,4 +138,34 @@ class StockController extends Controller
         }
 
     }
+
+    public function adjust(Request $request, Stock $stock) {
+
+        try {
+
+            $validated = $request->validate([
+                'qtty' => 'required|numeric'
+            ]);
+
+            StockTrxn::create([
+                'product_id' => $stock->product_id,
+                'trxn_type' => 'adjustment',
+                'ref_code' => "ADJUSTMENT",
+                'user' => Auth::user()->id,
+                'qtty' => $validated['qtty'],
+                'stock_before' => $stock->in_stock,
+                'stock_after' =>  $validated['qtty'],
+                'reason' => 'ADJUSTMENT',
+            ]);
+
+            // $stock->in_stock = $validated['qtty'];
+            $stock->update(['in_stock' => $validated['qtty']]);
+
+            return response()->json(['Success' => 'Updated successfully']);
+
+        } catch(Exception $e) {
+            return response()->json(['Error' => $e->getMessage()]);
+        }
+
+    }
 }

@@ -49,6 +49,37 @@
 
         </div>
 
+        <div class="modal" id="customer-update-modal">
+        
+            <div class="modal-content" >
+                
+                <div class="modal-title">
+                    <h3>Edit Customer</h3>
+                    <button class="" onclick="toggleUpModal()">Close</button>
+                </div>
+
+                <div class="modal-body">
+                
+                        <div class="input-box">
+                            <label>Customer name</label>
+                            <input type="text" id="unames" name="unames" />
+                        </div>
+                        <div class="input-box">
+                            <label>Customer Phone</label>
+                            <input type="text" id="uphone" name="uphone" />
+                        </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class="" onclick="toggleUpModal()">Cancel</button>
+                    <button class="" onclick="updateCustomer()">Save</button>
+                </div>
+
+            </div>
+
+        </div>
+
         <div class="dash-grid">
 
             <div class="dash-topbar">
@@ -66,7 +97,6 @@
                     <li><a href="/orders">Orders</a></li>
                     <li><a href="/products">Products</a></li>
                     <li><a href="/customers">Customers</a></li>
-                    <li><a href="/purchases">Purchases</a></li>
                     <li><a href="/inventory">Inventory</a></li>
                     <li><a href="/users">Users</a></li>
                     <li><a href="/settings">Settings</a></li>
@@ -108,16 +138,26 @@
 
                     <table> 
                         <thead>
-                            <th>Order Date </th>
-                            <th>Order No</th>
-                            <th>Customer</th>
-                            <th>Payment</th>
-                            <th>Dine</th>
+                            <th>Created</th>
+                            <th>Names</th>
+                            <th>Phone</th>
                             <th>Status</th>
-                            <th>Cashier</th>
-                            <th>Total</th>
+                            <th>Action</th>
                         </thead>
                         <tbody>
+
+                            @foreach ($customers as $customer)
+                                <tr>
+                                    <td>{{ $customer->created_at }}</td>
+                                    <td>{{ $customer->names }}</td>
+                                    <td>{{ $customer->phone }}</td>
+                                    <td></td>
+                                    <td>
+                                        <button type="button" onclick="openUpModal({{ Js::from($customer) }})">Update</button>
+                                        <button type="button" onclick="deleteCustomer({{ Js::from($customer)  }})">x</button>
+                                    </td>
+                                </tr>
+                            @endforeach
 
                         </tbody>
                     </table>
@@ -162,6 +202,69 @@
                     document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
                 })
                 .catch(error => console.error('Error:', error));
+            }
+        </script>
+
+        
+
+        <script>
+
+            let customerId = "";
+            
+            const umodal = document.getElementById("customer-update-modal");
+
+            function toggleUpModal() {
+                umodal.classList.toggle("order-modal-active")
+            }
+
+            function openUpModal(user) {
+                toggleUpModal();
+                customerId = user.id;
+                document.getElementById('unames').value = user.names;
+                document.getElementById('uphone').value = user.phone;
+            }
+
+            function updateCustomer(user) {
+
+                const unames = document.getElementById('unames').value;
+                const uphone = document.getElementById('uphone').value;
+
+                fetch(`/customers/${customerId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ names: unames, phone: uphone })
+                })
+                .then(response =>{  toggleUpModal(); })
+                .then(data => {
+                    document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                })
+                .catch(error => console.error('Error:', error));
+
+            }
+
+        </script>
+
+        <script>
+            function deleteCustomer(user) {
+
+                fetch(`/customers/${user.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        
+                    })
+                    .then(response => toggleModal() )
+                    .then(data => {
+                        document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                        window.location.href = '/settings';
+                    })
+                    .catch(error => console.error('Error:', error));
+
             }
         </script>
     </body>

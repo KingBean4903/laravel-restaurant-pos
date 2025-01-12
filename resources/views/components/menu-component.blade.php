@@ -118,7 +118,6 @@
                     @auth
                     <li><a href="/products">Products</a></li>
                     <li><a href="/customers">Customers</a></li>
-                    <li><a href="/purchases">Purchases</a></li>
                     <li><a href="/inventory">Inventory</a></li>
                     <li><a href="/users">Users</a></li>
                     <li><a href="/settings">Settings</a></li>

@@ -37,7 +37,7 @@ class CustomersController extends Controller
         try {
 
             $request->validate([
-                'name' => 'required|string|max:255',
+                'names' => 'required|string|max:255',
                 'phone' => 'required|string',
             ]);
 
@@ -47,7 +47,7 @@ class CustomersController extends Controller
 
         } catch(Exception $e) {
 
-            return response()->json(['Error' => 'Failed to create customer'], 500);
+            return response()->json(['Error' => $e->getMessage()], 500);
         }
 
     }

@@ -63,4 +63,43 @@ class ProductsController extends Controller
             return response()->json(['Error' => $e->getMessage()], 500);
         }
     }
+
+    public function update(Request $request, Product $product) {
+
+
+        try {
+
+            $validated = $request->validate([
+                'title' => 'required|string',
+                'uom' => 'required|string',
+                'category' => 'required|string',
+                'department'=> 'required|string',
+                'is_menu' => 'required|boolean',
+                'price' => 'required|integer'
+            ]);
+
+            $product->update($request->all());
+
+            return response()->json(['Success' => 'Product created successfully'], 200);
+
+        } catch(Exception $e) {
+
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
+
+
+
+    }
+
+    // Delete customer
+    public function destroy(Product $product)
+    {
+        try {
+            $product->delete();
+            return response()->json(['Success' => 'Deleted customer successfully'],  200);
+        } catch (Exception $e) {
+            return response()->json(['Error' => 'Failed to create customer'], 500);
+        }
+
+    }
 }

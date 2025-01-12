@@ -45,6 +45,7 @@ Route::middleware(['auth'])->group(function () {
     Route::get('/audit', [DashController::class, 'audit'])->name('audit');
     Route::post('/stock-audit', [StockController::class, 'stockAudit'])->name('stock-audit');
     Route::post('/purchase', [StockController::class, 'purchase'])->name('purchase');
+    Route::put('/adjustment/{stock}', [StockController::class, 'adjust'])->name('adjust');
 
     // Category routes
     Route::post('/category', [CategoryController::class, 'store' ] )->name('category');
@@ -54,15 +55,19 @@ Route::middleware(['auth'])->group(function () {
 
     // Products routes
     Route::post('/product', [ProductsController::class, 'store' ] )->name('product');
-    
+    Route::put('/products/{product}', [ProductsController::class, 'update' ] )->name('update-product');
+    Route::delete('/products/{product}', [ProductsController::class, 'destroy' ] )->name('destroy-product');
+
     // Customers routes
     Route::post('/customers', [CustomersController::class, 'store' ] )->name('create-customer');
-    Route::put('/customers', [CustomersController::class, 'update' ] )->name('update-customer');
-    Route::delete('/customers', [CustomersController::class, 'destroy' ] )->name('destroy-customer');
+    Route::put('/customers/{customer}', [CustomersController::class, 'update' ] )->name('update-customer');
+    Route::delete('/customers/{customer}', [CustomersController::class, 'destroy' ] )->name('destroy-customer');
     Route::get('/customers', [DashController::class, 'customersIndex'])->name('customers');
 
     // Users route
     Route::get('/users', [DashController::class, 'usersIndex'])->name('users');
     Route::post('/users', [AuthController::class, 'store'])->name('create-user');
+    Route::delete('/users/{user}', [AuthController::class, 'destroy'])->name('destroy-user');
+    Route::put('/users/{user}', [AuthController::class, 'updateUser'])->name('update-user');
 
 });
