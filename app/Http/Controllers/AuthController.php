@@ -100,6 +100,7 @@ class AuthController extends Controller
  
             $validated = $request->validate([
                 'name' => 'required|string|max:255',
+                'phone' => 'required|string',
                 'email' => 'required|string|email|max:255|unique:users',
                 'password' => 'required|string|min:8',
                 'role'=> 'required|string',
@@ -109,6 +110,7 @@ class AuthController extends Controller
             User::create([
                 'name' => $validated['name'],
                 'email' => $validated['email'],
+                'phone' => $validated['phone'],
                 'password' => Hash::make($validated['password']),
                 'role' => $validated['role'],
                 'pin' => $validated['pin'],
@@ -119,10 +121,9 @@ class AuthController extends Controller
     
         } catch(Exception $e) {
     
-            Log::error("Create user error ".$e->getMessage());
     
             return response()
-                            ->json([ 'Error' => $e->getLine()], 500);
+                            ->json([ 'Error' => $e->getMessage()], 500);
     
         }
        
@@ -133,8 +134,49 @@ class AuthController extends Controller
          return view('components.login-page');
      }
 
-     function registerPage() {
+     // updateUser : User update handler function
+     function updateUser(Request $request, User $user)
+     {
+        try {
+            $validated = $request->validate([
+                'name' => 'string|max:255',
+                'phone' => 'string',
+                'role'  => 'string',
+                'pin' => 'nullable|numeric|integer|min_digits:4|max_digits:4',
+                'password' => 'string|min:8',
+            ]);
+            
+            $user->update([
+                'name' => $validated['name'] == " " ? $user->name : $validated['name'],
+                'phone' => $validated['phone']  == " " ? $user->phone : $validated['phone'],
+                'role' => $validated['role']  == " " ? $user->role : $validated['role'],
+                'pin' => $validated['pin']  == " " ? $user->pin : $validated['pin'],
+                'password' => $validated['password'] == " " ? $user->password : Hash::make($validated['password']),
+            ]);
+            
+            return response()->json(['Message' => 'User updated successfully'],  200);
 
+        } catch (Exception $e) {
+            return response()->json(['Error' => $e->getMessage()],  500);
+        }
+
+     }
+
+    // Delete user
+    function destroy(User $user) {
+        
+        try {
+            $user->delete();
+        
+            return response()->json(['Error' => 'User deleted successfully'], 200);
+        
+        } catch(Exception $e) {
+        
+            return response()->json(['Error' => $e->getMessage()], 500);
+        }
+    }
+
+     function registerPage() {
         return view('components.register-page');;
     }
 

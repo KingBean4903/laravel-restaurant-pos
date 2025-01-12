@@ -9,4 +9,12 @@ class Stock extends Model
 {
     //
     use HasUlids;
+
+    protected $fillable = [
+        'location',
+        'status',
+        'product_id',
+        'in_stock',
+        'reason',
+    ];
 }

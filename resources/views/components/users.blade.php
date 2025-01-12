@@ -9,6 +9,9 @@
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title>Namitis</title>
         <meta name="description" content="">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&family=Open+Sans:ital,wght@0,300..800;1,300..800&display=swap" rel="stylesheet">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
         @vite(['resources/css/app.css', 'resources/js/app.js'])
@@ -30,34 +33,87 @@
                 
                         <div class="input-box">
                             <label>Names</label>
-                            <input type="text" />
+                            <input type="text" id="name" />
                         </div>
                         <div class="input-box">
                             <label>Phone</label>
-                            <input type="text" />
+                            <input type="text" id="phone" />
+                        </div>
+                        <div class="input-box">
+                            <label>Email</label>
+                            <input type="text" id="email" />
                         </div>
                         <div class="input-box">
                             <label>PIN</label>
-                            <input type="text" />
+                            <input type="number" max="4" min="4" id="pin" />
                         </div>
                         <div class="input-box">
                             <label>Password</label>
-                            <input type="text" />
+                            <input type="text" id="password" />
                         </div>
                         <div class="select-box">
                             <label>Role</label>
-                            <select>
-                                <option>ADMIN</option>
-                                <option>CASHIER</option>
-                                <option>MANAGER</option>
+                            <select id='role'>
+                                <option value="ADMIN">ADMIN</option>
+                                <option value="CASHIER">CASHIER</option>
+                                <option value='MANAGER'>MANAGER</option>
                             </select>
                         </div>
 
                 </div>
 
                 <div class="modal-footer">
-                    <button class="">Cancel</button>
-                    <button class="" onclick="toggleModal()">Submit</button>
+                    <button class=""  onclick="toggleModal()">Cancel</button>
+                    <button class="" onclick="createUser()">Save</button>
+                </div>
+
+            </div>
+        </div>
+
+        <div class="modal" id="user-update-modal">
+            <div class="modal-content" >
+                
+                <div class="modal-title">
+                    <h3>Update User</h3>
+                    <button class="" onclick="toggleUpdateModal()">Close</button>
+                </div>
+
+                <div class="modal-body">
+                
+                        <div class="input-box">
+                            <label>Names</label>
+                            <input type="text" id="ename" />
+                        </div>
+                        <div class="input-box">
+                            <label>Phone</label>
+                            <input type="text" id="ephone" />
+                        </div>
+                        <div class="input-box">
+                            <label>Email</label>
+                            <input type="text" id="eemail" />
+                        </div>
+                        <div class="input-box">
+                            <label>PIN</label>
+                            <input type="number" max="4" min="4" id="epin" />
+                        </div>
+                        <div class="input-box">
+                            <label>Password</label>
+                            <input type="text" id="epassword" />
+                        </div>
+                        <div class="select-box">
+                            <label>Role</label>
+                            <select id='erole'>
+                                <option value="ADMIN">ADMIN</option>
+                                <option value="CASHIER">CASHIER</option>
+                                <option value='MANAGER'>MANAGER</option>
+                            </select>
+                        </div>
+
+                </div>
+
+                <div class="modal-footer">
+                    <button class=""  onclick="toggleUpdateModal()">Cancel</button>
+                    <button class="" onclick="updateUser()">Save</button>
                 </div>
 
             </div>
@@ -124,17 +180,28 @@
 
                     <table> 
                         <thead>
-                            <th>Order Date </th>
-                            <th>Order No</th>
-                            <th>Customer</th>
-                            <th>Payment</th>
-                            <th>Dine</th>
-                            <th>Status</th>
-                            <th>Cashier</th>
-                            <th>Total</th>
+                            <th>Created</th>
+                            <th>Name</th>
+                            <th>Email</th>
+                            <th>Phone</th>
+                            <th>Role</th>
+                            <th>Action</th>
                         </thead>
                         <tbody>
 
+                            @foreach ($users as $user)
+                                <tr>
+                                    <td>{{ $user->created_at  }}</td>
+                                    <td>{{ $user->name  }}</td>
+                                    <td>{{ $user->email  }}</td>
+                                    <td>{{ $user->phone  }}</td>
+                                    <td>{{ $user->role  }}</td>
+                                    <td>
+                                        <button type="button" onclick="updateModal({{ Js::from($user) }})">Edit</button>
+                                        <button type="button" onclick="deleteUser({{ Js::from($user)}})">Dlt</button>
+                                    </td>
+                                </tr>
+                            @endforeach
                         </tbody>
                     </table>
 
@@ -157,5 +224,104 @@
             }
 
         </script>
+
+        <script>
+
+            let userId = "";
+
+            function toggleUpdateModal() {
+                const uModal = document.getElementById('user-update-modal');
+                uModal.classList.toggle("update-user-modal");
+            }
+
+            function updateModal(user) {
+
+                userId = user.id;
+
+                toggleUpdateModal()
+                document.getElementById("ename").value = user.name;
+                document.getElementById("ephone").value = user.phone;
+                document.getElementById("eemail").value = user.email;
+                document.getElementById("epin").value = user.pin;
+                document.getElementById("erole").value = user.role;
+
+            }
+
+            function updateUser() {
+
+                const name = document.getElementById('ename').value;
+                const phone = document.getElementById('ephone').value;
+                const email = document.getElementById('eemail').value;
+                const pin = parseInt(document.getElementById('epin').value);
+                const password = document.getElementById('epassword').value;
+                const role = document.getElementById('erole').value;
+
+                fetch(`/users/${userId}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ name, phone, email, pin, password, role })
+                })
+                .then(response => toggleModal() )
+                .then(data => {
+                    document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                    window.location.href = '/settings';
+                })
+                .catch(error => console.error('Error:', error));
+
+            }
+        </script>
+
+        <script>
+            function deleteUser(user) {
+
+                fetch(`/users/${user.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ name, phone, email, pin, password, role })
+                    })
+                    .then(response => toggleModal() )
+                    .then(data => {
+                        document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                        window.location.href = '/settings';
+                    })
+                    .catch(error => console.error('Error:', error));
+
+            }
+        </script>
+
+        
+        <script>
+            function createUser() {
+
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+                const email = document.getElementById('email').value;
+                const pin = parseInt(document.getElementById('pin').value);
+                const password = document.getElementById('password').value;
+                const role = document.getElementById('role').value;
+
+                fetch('/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ name, phone, email, pin, password, role })
+                })
+                .then(response => toggleModal() )
+                .then(data => {
+                    document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                    window.location.href = '/settings';
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        </script>
+
     </body>
 </html>
