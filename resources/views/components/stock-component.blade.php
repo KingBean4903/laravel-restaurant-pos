@@ -22,7 +22,7 @@
             <div class="modal-content" >
                 
                 <div class="modal-title">
-                    <h3>Add User</h3>
+                    <h3>Stock Transfer</h3>
                     <button class="" onclick="toggleModal()">Close</button>
                 </div>
 
@@ -30,25 +30,37 @@
                 
                         <div class="input-box">
                             <label>Product</label>
-                            <input type="text" />
+                            <select id="product">
+                                @foreach($products as $dpt)
+                                    <option value={{ $dpt->id }}>{{ $dpt->title }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="input-box">
                             <label>Qtty</label>
-                            <input type="text" />
+                            <input type="number" id="qtty" />
                         </div>
                         <div class="input-box">
                             <label>From</label>
-                            <input type="text" />
+                            <select id="from">
+                                @foreach($departments as $dpt)
+                                    <option>{{ $dpt->title }}</option>
+                                @endforeach
+                            </select>
                         </div>
                         <div class="input-box">
                             <label>To</label>
-                            <input type="text" />
+                            <select id="to">
+                                @foreach($departments as $dpt)
+                                    <option>{{ $dpt->title }}</option>
+                                @endforeach
+                            </select>
                         </div>
                 </div>
 
                 <div class="modal-footer">
-                    <button class="">Cancel</button>
-                    <button class="" onclick="toggleModal()">Submit</button>
+                    <button class="" onclick="toggleModal()">Cancel</button>
+                    <button class="" onclick="transfer()">Submit</button>
                 </div>
 
             </div>
@@ -89,6 +101,7 @@
                         <button type="button" onclick="toggleModal()">
                             ADD
                         </button>
+                        <a href="/audit">Stock Audit</a>
                     </div>
 
                     <div class="dash-datatable-searchbar">
@@ -144,5 +157,30 @@
             }
 
         </script>
+    
+        <script>
+            function transfer() {
+                const from = document.getElementById('from').value;
+                const to = document.getElementById('to').value;
+                const qtty = document.getElementById('qtty').value;
+                const product_id = document.getElementById('product').value;
+
+                fetch('/transfer', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        body: JSON.stringify({ from, to, qtty, product_id })
+                    })
+                    .then(response =>  toggleModal() )
+                    .then(data => {
+                        document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                    
+                    })
+                    .catch(error => console.error('Error:', error));
+            }
+        </script>
+    
     </body>
 </html>

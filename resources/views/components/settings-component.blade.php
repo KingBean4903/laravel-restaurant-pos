@@ -63,16 +63,16 @@
                                     <div class="popup-modal-body">
                                         <div>
                                             <label>Department</label>
-                                            <input type="text" />
+                                            <input type="text" name="dpt_title" id='dpt_title' />
                                         </div>
                                         <div>
                                             <label>Description</label>
-                                            <input type="text" />
+                                            <input type="text" name="dpt_desc" id="dpt_desc" />
                                         </div>
                                     </div>
                                     <div class="popup-modal-footer">
                                         <button type="button">Cancel</button>
-                                        <button type="button">Save</button>
+                                        <button type="button" onclick="submitCreateDepartment()">Save</button>
                                     </div>
                                 </div>
                             </div>
@@ -80,13 +80,19 @@
 
                             <div class="settings-title">
                                 <h4>Departments</h4>
-                                <button type="button" onclick="toggleModal()">
-                                    +
-                                </button>
-                            </div>
+                                    <button type="button" onclick="toggleModal()">
+                                        +
+                                    </button>
+                                </div>
+                                <ul>
+                                    @foreach ($departments as $dpt)
+                                        <li>{{ $dpt->title }}</li>
+                                    @endforeach
+                                </ul>
                         </div>
 
                         <div class="settings-card">
+
                             <div class="popup-modal" id="cats-modal">
                                 <div class="popup-modal-content">
                                     <div class="popup-modal-title">
@@ -95,26 +101,33 @@
                                     </div>
                                     <div class="popup-modal-body">
                                         <div>
-                                            <label>Department</label>
-                                            <input type="text" />
+                                            <label>Category</label>
+                                            <input type="text" name="cat_name" id="cat_name" />
                                         </div>
                                         <div>
                                             <label>Description</label>
-                                            <input type="text" />
+                                            <input type="text" name="cat_desc" id="cat_desc" />
                                         </div>
                                     </div>
                                     <div class="popup-modal-footer">
                                         <button type="button">Cancel</button>
-                                        <button type="button">Save</button>
+                                        <button type="button" onclick="submitCreateCategory()">Save</button>
                                     </div>
                                 </div>
                             </div>
+
                             <div class="settings-title">
                                 <h4>Categories</h4>
                                 <button type="button" onclick="toggleModalCats()">
                                     +
                                 </button>
                             </div>
+
+                            <ul>
+                                @foreach ($categories as $category)
+                                    <li>{{ $category->title  }}</li>
+                                @endforeach
+                            </li>
 
 
 
@@ -141,6 +154,51 @@
             const cModal = document.getElementById("cats-modal");
             function toggleModalCats() {
                 cModal.classList.toggle("cats-modal-active")
+            }
+        </script>
+        {{-- CREATE DEPARTMENT FUNCTION--}}
+        <script>
+            function submitCreateDepartment() {
+                const title = document.getElementById('dpt_title').value;
+                const description = document.getElementById('dpt_desc').value;
+
+                fetch('/department', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ title, description })
+                })
+                .then(response =>  window.location.href = '/settings' )
+                .then(data => {
+                    document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                   
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        </script>
+
+        <script>
+            function submitCreateCategory() {
+
+                const cTitle = document.getElementById('cat_name').value;
+                const cDesc = document.getElementById('cat_desc').value;
+
+                fetch('/category', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ title : cTitle, description: cDesc })
+                })
+                .then(response => window.location.href = '/settings' )
+                .then(data => {
+                    document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                    window.location.href = '/settings';
+                })
+                .catch(error => console.error('Error:', error));
             }
         </script>
     </body>

@@ -31,18 +31,18 @@
                 
                         <div class="input-box">
                             <label>Customer name</label>
-                            <input type="text" />
+                            <input type="text" id="names" name="names" />
                         </div>
                         <div class="input-box">
                             <label>Customer Phone</label>
-                            <input type="text" />
+                            <input type="text" id="phone" name="phone" />
                         </div>
 
                 </div>
 
                 <div class="modal-footer">
-                    <button class="">Cancel</button>
-                    <button class="" onclick="toggleModal()">Submit</button>
+                    <button class="" onclick="toggleModal()">Cancel</button>
+                    <button class="" onclick="submitCustomer()">Save</button>
                 </div>
 
             </div>
@@ -141,6 +141,28 @@
                 modal.classList.toggle("order-modal-active")
             }
 
+        </script>
+
+        <script>
+            function submitCustomer() {
+
+                const names = document.getElementById('names').value;
+                const phone = document.getElementById('phone').value;
+
+                fetch('/customers', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ names, phone })
+                })
+                .then(response =>{ window.location.href = '/customers'; toggleModal(); })
+                .then(data => {
+                    document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                })
+                .catch(error => console.error('Error:', error));
+            }
         </script>
     </body>
 </html>

@@ -30,34 +30,38 @@
                 
                         <div class="input-box">
                             <label>Names</label>
-                            <input type="text" />
+                            <input type="text" id="name" />
                         </div>
                         <div class="input-box">
                             <label>Phone</label>
-                            <input type="text" />
+                            <input type="text" id="phone" />
+                        </div>
+                        <div class="input-box">
+                            <label>Email</label>
+                            <input type="text" id="email" />
                         </div>
                         <div class="input-box">
                             <label>PIN</label>
-                            <input type="text" />
+                            <input type="number" max="4" min="4" id="pin" />
                         </div>
                         <div class="input-box">
                             <label>Password</label>
-                            <input type="text" />
+                            <input type="text" id="password" />
                         </div>
                         <div class="select-box">
                             <label>Role</label>
-                            <select>
-                                <option>ADMIN</option>
-                                <option>CASHIER</option>
-                                <option>MANAGER</option>
+                            <select id='role'>
+                                <option value="ADMIN">ADMIN</option>
+                                <option value="CASHIER">CASHIER</option>
+                                <option value='MANAGER'>MANAGER</option>
                             </select>
                         </div>
 
                 </div>
 
                 <div class="modal-footer">
-                    <button class="">Cancel</button>
-                    <button class="" onclick="toggleModal()">Submit</button>
+                    <button class=""  onclick="toggleModal()">Cancel</button>
+                    <button class="" onclick="createUser()">Save</button>
                 </div>
 
             </div>
@@ -157,5 +161,33 @@
             }
 
         </script>
+        
+        <script>
+            function createUser() {
+
+                const name = document.getElementById('name').value;
+                const phone = document.getElementById('phone').value;
+                const email = document.getElementById('email').value;
+                const pin = parseInt(document.getElementById('pin').value);
+                const password = document.getElementById('password').value;
+                const role = document.getElementById('role').value;
+
+                fetch('/users', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ name, phone, email, pin, password, role })
+                })
+                .then(response => toggleModal() )
+                .then(data => {
+                    document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                    window.location.href = '/settings';
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        </script>
+
     </body>
 </html>

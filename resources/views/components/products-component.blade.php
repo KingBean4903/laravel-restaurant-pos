@@ -31,54 +31,64 @@
                 
                         <div class="input-box">
                             <label>Product name</label>
-                            <input type="text" />
+                            <input type="text" name="title" id="title"/>
                         </div>
 
                         <div class="select-box">
                             <label>UOM</label>
-                            <select>
-                                <option>PCS</option>
-                                <option>KGS</option>
-                                <option>Btl</option>
-                                <option>Plate</option>
-                                <option>Packet</option>
+                            <select name="uom" id="uom">
+                                <option value="PCS">PCS</option>
+                                <option value="Kgs">KGS</option>
+                                <option value="CUP">Cup</option>
+                                <option value="Btl">Bottle</option>
+                                <option value="Plate">Plate</option>
+                                <option value="Packet">Packet</option>
                             </select>
                         </div>
 
                         <div class="input-box">
                             <label>Price</label>
-                            <input type="text" />
+                            <input type="number" id="price" name="price" />
                         </div>
 
                         <div class="input-box">
                             <label>Opening Stock</label>
-                            <input type="text" />
+                            <input type="text" id="opening_stock" name="opening_stock"  />
                         </div>
 
                         <div class="select-box">
                             <label>Category</label>
-                            <select>
-                                <option>SNACKS</option>
-                                <option>MEATS</option>
-                                <option>FRUITS</option>
-                                <option>VEGETABLE</option>
-                                <option>GRAINS</option>
+                            <select id="category" name="category">
+                                @foreach ($categories as $category)
+                                    <option value={{ $category->title }} > {{ $category->title }} </option>
+                                @endforeach
                             </select>
                         </div>
 
                         <div class="select-box">
                             <label>Department</label>
-                            <select>
-                                <option>KITCHEN</option>
-                                <option>KITCHEN STORE</option>
+                            <select id="department" name="department">
+                                @foreach ($departments as $dpt)
+                                    <option value={{ $dpt->title }} > {{ $dpt->title }} </option>
+                                @endforeach
                             </select>
+                        </div>
+
+                        <div class="radio-box">
+                            <h4>Is Menu</h4>
+                            <label>
+                                <input type="radio" id="is_menu" name="is_menu" value="yes"  /> Yes
+                            </label>
+                            <label>
+                                <input type="radio" id="is_menu" name="is_menu" value="no"  /> No
+                            </label>
                         </div>
 
                 </div>
 
                 <div class="modal-footer">
-                    <button class="">Cancel</button>
-                    <button class="" onclick="toggleModal()">Submit</button>
+                    <button class="" onclick="toggleModal()">Cancel</button>
+                    <button class="" onclick="save()">Submit</button>
                 </div>
 
             </div>
@@ -115,7 +125,7 @@
                 <div class="dash-datatable-view">
 
                     <div class="dash-datatable-titlebar">
-                        <h2>Orders</h2>
+                        <h2>Products</h2>
                         <button type="button" onclick="toggleModal()">
                             ADD
                         </button>
@@ -145,7 +155,7 @@
 
                     <table> 
                         <thead>
-                            <th>Order Date </th>
+                            <th></th>
                             <th>Order No</th>
                             <th>Customer</th>
                             <th>Payment</th>
@@ -170,13 +180,68 @@
         
         
         <script>
-            
             const modal = document.getElementById("product-modal");
-
             function toggleModal() {
                 modal.classList.toggle("product-modal-active")
             }
-
         </script>
+
+        <script>
+            function createProduct() {
+                const title = document.getElementById('dpt_title').value;
+                const description = document.getElementById('dpt_desc').value;
+
+                fetch('/department', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ title, description })
+                })
+                .then(response =>  window.location.href = '/settings' )
+                .then(data => {
+                    document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                   
+                })
+                .catch(error => console.error('Error:', error));
+            }
+        </script>
+
+        <script>
+            function save() {
+
+                const title = document.getElementById('title').value;
+                const uom = document.getElementById('uom').value;
+                const price = parseFloat(document.getElementById('price').value);
+
+                const opening_stock = parseInt(document.getElementById('opening_stock').value);
+                const category = document.getElementById('category').value;
+                const department = document.getElementById('department').value;
+                let isMenu = document.querySelector('input[name="is_menu"]:checked').value;
+                let is_menu = isMenu == "yes" ? true : false;
+
+                console.log(is_menu)
+
+                fetch('/product', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                    },
+                    body: JSON.stringify({ title, uom, price, opening_stock, category, department, is_menu })
+                })
+                .then(response =>  {
+                    {{-- window.location.href = '/products';  --}}
+                    toggleModal(); })
+                .then(data => {
+                    document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
+                   
+                })
+                .catch(error => console.error('Error:', error)); 
+
+            }
+        </script>
+
     </body>
 </html>
