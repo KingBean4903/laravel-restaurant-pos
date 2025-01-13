@@ -1,10 +1,21 @@
 :root {
     --primary-font: "Montserrat", serif;
+    --primary-blue: #3484F0;
+    --light-blue: #C4DBFA;
+    --white-color: #F7F7F7;
 }
 body {
     margin: 0;
     padding: 0;
     position: relative;
+    list-style-type: none;
+    list-style: none;
+}
+
+ul {
+    list-style-type: none;
+    list-style: none;
+    text-decoration: none;
 }
 
 .dash-grid {
@@ -39,10 +50,14 @@ body {
     width: 15vw;
     height: 100vh;  
     background: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
 }
 
 .dash-logo {
     height: 8vh;
+    width: 100%;
     display: flex;
     align-items:center;
 }
@@ -50,9 +65,34 @@ body {
 .dash-logo h3 {
     padding-left: 1em;
 }
-
+.dash-sidebar ul {
+    margin: 0;
+    padding: .5em;
+    display: flex;
+    flex-direction: column;
+    row-gap: 1em;
+    width: 80%;
+}
 .dash-sidebar ul li { 
-    padding: 1em;
+    border-radius: .5em;
+    padding: .85em;
+    cursor: pointer;
+    text-decoration: none;
+    text-transform: uppercase;
+    border: 1px solid #bdbdbd;
+}
+
+.dash-sidebar ul li a {
+    text-decoration: none;
+    color: #757575;
+    width: 100%;
+    height: 100%;
+    font-size: .875em;
+    font-weight: bold;
+}
+
+.active-li a {
+    color: #3484F0 !important;
 }
 
 .dash-body {
@@ -71,6 +111,7 @@ body {
     ;
     height: 92vh;
     width: 85vw;
+    overflow: hidden;
 }
 
 .menu-categories {
@@ -102,10 +143,13 @@ body {
 .menu-dishes {
     grid-area: menu-dishes;
     display: flex;
+    flex-direction: row;
     flex-wrap: wrap;
     row-gap: 1em;
     padding: 1em;
     column-gap: 1em;
+    max-height: 70vh;
+    overflow-y: scroll;
 }
 
 .menu-checkout {
@@ -137,19 +181,36 @@ body {
 }
 
 .checkout-row-total {
+    line-height: 0;
     display: flex;
     align-items: center;
     text-transform: capitalize;
     justify-content: space-between;
 }
 
+.checkout-row-total h3 {
+    font-size: .875em;
+    color: #424242;
+}
+
+.checkout-row-total h2 {
+    font-size: 1.5em;
+    color: #424242;
+}
+
 .menu-checkout-footer {
     margin-top: 1em;
+}
+
+.payment-method-ul {
+    margin-top: 1em;
+    margin-bottom: 1em;
 }
 
 .menu-checkout-footer button {
     width: 98%;
     padding: .5em;
+
     text-transform: uppercase;
 }
 
@@ -168,17 +229,30 @@ body {
 }
 
 .meals-card {
-    width: 13vw;
     padding: 1em;
-    height: 25vh;
-    line-height: 0;
     background: #fff;
+    line-height: 0;
+    height: 26vh;
 }
 
-.meals-card img {
-    height: 25vh;
-    width: 12vw;
+.meal-banner {
+    height: 15vh;
+    width: 10vw;
+    margin-bottom: 1em;
 }
+
+.meals-card h3 {
+    color: #424242;
+    font-size: 1em;
+}
+
+.meals-card h4 {
+    color: #424242;
+    font-size: 1.125em;
+    font-weight: 400;
+}
+
+
 
 .modal {
     position: absolute;
@@ -186,7 +260,7 @@ body {
     left: 0;
     width: 100vw;
     height: 100vh;
-    background: rgba(0, 0, 0, .5);
+    background: rgba(0, 0, 0, .135);
     display: none;
     align-items: center;
     justify-content: center;
@@ -197,6 +271,59 @@ body {
     display: flex;
     justify-content: space-between;
     align-items: center;
+}
+
+.modal-title {
+    display: flex;
+    text-transform: uppercase;
+    font-family: var(--primary-font);
+}
+
+.input-box {
+    display: flex;
+    flex-direction: column;
+    margin-top: 1em;
+    font-family: var(--primary-font);
+}
+
+.input-box label {
+    font-size: .75em;
+    text-transform: uppercase;
+    font-weight: 600;
+}
+
+.input-box input {
+    padding: .5em;
+    outline: none;
+    border: 1px solid #757575;
+    border-radius: .25em;
+    width: 18vw;
+}
+
+.radio-box {
+    display: flex;
+    flex-direction: column;
+    font-family: var(--primary-font);
+}
+
+.radio-box h4 {
+    color: #424242;
+    line-height: 0;
+}
+
+.radio-box label {
+    font-size: .875em;
+}
+
+.select-box {
+    margin-top: 1em;
+    display: flex;
+    flex-direction: column;
+}
+
+.modal-title h3 {
+    color: #424242;
+    font-size: 1em;
 }
 
 .modal-footer {
@@ -211,6 +338,7 @@ body {
 
 .modal-content {
     background: #f5f5f5;
+    border-radius: .5em;
 }
 
 .order-modal-active 
@@ -327,7 +455,7 @@ table {
 table thead th {
     font-size: .75em;
     background: #fff;
-    padding: .85em 1.5em;
+    padding: 1em 1.5em;
     font-weight: 600;
     color: #424242;
     text-align: start;
@@ -340,7 +468,6 @@ table tbody tr  {
 }
 
 table tbody tr  td {
-    background: #fff;
     padding: .85em;
     color: #424242;
     font-size: .875em;
@@ -356,4 +483,145 @@ table tbody tr  td {
 
 .adj-modal-active {
     display: flex;
+}
+
+.filled-button {
+    background: var(--primary-blue);
+    color: #fff;
+    font-family: var(--primary-font);
+    text-transform: uppercase;
+    font-weight: bold;
+    border: 1px solid var(--primary-blue);
+    padding: .5em 1em;
+    border-radius: .5em;
+}
+
+#place-order-btn {
+    padding: .875em;
+    font-size: .875em;
+    width: 100%;
+}
+
+.active-dine-li {
+    background: #3484F0;
+    color: #fff;
+    font-weight: bold;
+}
+
+.active-pay-li {
+    background: #3484F0;
+    color: #fff;
+    font-weight: bold;
+}
+
+.active-customer-box {
+    display: flex;
+    flex-direction: column;
+}
+
+.new-customer-box {
+    display: none;
+}
+
+.customer-list-box {
+    display: none;
+}
+
+table tbody {
+    max-height: 50vh;
+    overflow-y: scroll;
+}
+.bold_td {
+    font-weight: bold;
+}
+
+.dash-datatable-searchbar {
+    display: flex;
+    align-items: center;
+    column-gap: 1em;
+    padding-bottom: 1em;
+}
+
+.dates-filter {
+    display: flex;
+    align-items: center;
+    column-gap: 1em;
+}
+
+.dates-filter label {
+    font-size: .875em;
+    text-transform: uppercase;
+    font-weight: bold;
+}
+
+table tbody tr:hover {
+    background: #eee;
+}
+
+.dash-topbar button {
+    margin-right: 2em;
+}
+
+.login-page {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100vw;
+    height: 100vh;
+}
+
+.login {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background: #f5f5f5;
+    padding: 2em 2em; 
+    border-radius: 2em;
+    font-family: var(--primary-font);
+}
+
+.login h2 {
+    line-height: 0;
+}
+
+.login label {
+    color: #424242;
+}
+
+.login button {
+    margin-top: 1em;
+    width: 100%;
+    font-size: 1em;
+}
+
+.settings-card ul {
+    display: flex;
+    margin-top: 0;
+    flex-direction: column;
+}
+
+.settings-card ul {
+    max-height: 20vh;
+    overflow: hidden;
+    overflow-y: scroll;
+}
+.settings-card ul li {
+    display: flex;
+    font-size: .75em;
+    padding: .25em;
+    justify-content: space-between;
+    width: 90%;
+}
+
+.dash-datatable-titlebar {
+    display: flex;
+    align-items: center;
+    width: 80%;
+    justify-content: space-between;
+}
+
+.stock-audit {
+    display: flex;
+    padding: 1em;
+    column-gap: 2em;
 }

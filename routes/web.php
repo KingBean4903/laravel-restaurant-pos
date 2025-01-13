@@ -49,9 +49,11 @@ Route::middleware(['auth'])->group(function () {
 
     // Category routes
     Route::post('/category', [CategoryController::class, 'store' ] )->name('category');
+    Route::delete('/category/{category}', [CategoryController::class, 'delete' ] )->name('destroy-category');
 
     // Department routes
     Route::post('/department', [DepartmentController::class, 'store' ] )->name('department');
+    Route::delete('/department/{department}', [DepartmentController::class, 'delete'])->name('destroy-department');
 
     // Products routes
     Route::post('/product', [ProductsController::class, 'store' ] )->name('product');

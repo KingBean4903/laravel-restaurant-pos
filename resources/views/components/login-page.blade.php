@@ -11,6 +11,7 @@
         <meta name="description" content="">
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link rel="stylesheet" href="">
+        @vite(['resources/css/app.css', 'resources/js/app.js'])
     </head>
     <body>
         <!--[if lt IE 7]>
@@ -18,6 +19,7 @@
         <![endif]-->
         
         <div class="login-page">
+
             <div class="login">
                 <h2>Namitis Admin</h2>
                 <div class="login-form">
@@ -29,13 +31,14 @@
 
                     <div class="input-box">
                         <label>Password</label>
-                        <input type="text" name="password" id="password" />
+                        <input type="password" name="password" id="password" />
                     </div>
                     
-                    <button type="button" onclick="login()" >Login</button>
+                    <button type="button" class="filled-button" onclick="login()" >Login</button>
                 
                 </div>
             </div>
+
         </div>
 
         <script>

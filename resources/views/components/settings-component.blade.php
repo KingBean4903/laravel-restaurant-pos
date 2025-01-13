@@ -38,8 +38,16 @@
                     <li><a href="/purchases">Purchases</a></li>
                     <li><a href="/inventory">Inventory</a></li>
                     <li><a href="/users">Users</a></li>
-                    <li><a href="/settings">Settings</a></li>
+                    <li class="active-li"><a href="/settings">Settings</a></li>
                 </ul>
+
+                 @auth
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit">Logout</button>
+                    </form>
+                @endauth
+
             </div>
 
             <div class="dash-body">
@@ -86,7 +94,7 @@
                                 </div>
                                 <ul>
                                     @foreach ($departments as $dpt)
-                                        <li>{{ $dpt->title }}</li>
+                                        <li>{{ $dpt->title }} <button onclick="deleteDpt({{ Js::from($dpt) }})" type="button">x</button></li>
                                     @endforeach
                                 </ul>
                         </div>
@@ -125,7 +133,7 @@
 
                             <ul>
                                 @foreach ($categories as $category)
-                                    <li>{{ $category->title  }}</li>
+                                    <li>{{ $category->title  }} <button onclick="deleteCategory({{ Js::from($category) }})" type="button">x</button></li>
                                 @endforeach
                             </li>
 
@@ -142,7 +150,44 @@
 
         </div>
 
+        <script>
+            function deleteCategory(category) {
 
+                fetch(`/category/${category.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        
+                    })
+                    .then(response => { window.location.href = '/settings'; }  )
+                    .then(data => {
+                        window.location.href = '/settings';
+                    })
+                    .catch(error => console.error('Error:', error));
+
+            }
+        </script>
+
+        <script>
+            function deleteDpt(department) {
+
+                fetch(`/department/${department.id}`, {
+                        method: 'DELETE',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        },
+                        
+                    })
+                    .then(response => { window.location.href = '/settings'; }  )
+                    .then(data => {
+                    })
+                    .catch(error => console.error('Error:', error));
+
+            }
+        </script>
         
         <script>
             const modal = document.getElementById("dptmnt-modal");
@@ -170,7 +215,9 @@
                     },
                     body: JSON.stringify({ title, description })
                 })
-                .then(response =>  window.location.href = '/settings' )
+                .then(response =>  {
+                    window.location.href = '/settings';
+                } )
                 .then(data => {
                     document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
                    

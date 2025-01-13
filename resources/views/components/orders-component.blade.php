@@ -21,7 +21,13 @@
         <div class="dash-grid">
 
             <div class="dash-topbar">
-                <h3>currentuser@gmail.com</h3>
+                @if (NULL != Auth::user())
+                    <h3>{{ Auth::user()->email }} {{ Auth::user()->name }}</h3>
+                @else
+                    <button type="button" class="filled_button">
+                        <a href="/login">Login</a>
+                    </button>
+                @endif
             </div>
 
             <div class="dash-sidebar">
@@ -31,15 +37,24 @@
                 </div>
 
                 <ul>
-                    <li><a href="/">Menu</a></li>
-                    <li><a href="/orders">Orders</a></li>
+                     <li ><a href="/">Menu</a></li>
+                    <li class="active-li"> <a href="/orders">Orders</a></li>
+                    @auth
                     <li><a href="/products">Products</a></li>
                     <li><a href="/customers">Customers</a></li>
-                    <li><a href="/purchases">Purchases</a></li>
                     <li><a href="/inventory">Inventory</a></li>
                     <li><a href="/users">Users</a></li>
                     <li><a href="/settings">Settings</a></li>
+                    @endauth
                 </ul>
+
+                 @auth
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button  type="submit">Logout</button>
+                    </form>
+                @endauth
+
             </div>
 
             <div class="dash-body">
@@ -48,33 +63,32 @@
 
                     <div class="dash-datatable-titlebar">
                         <h2>Orders</h2>
-                        <button type="button">
-                            ADD
-                        </button>
+                       
                     </div>
-
+                     
                     <div class="dash-datatable-searchbar">
                         
                         <input type="searh" placeholder="Search...." />
-                        <div class="">
+                        <div class="dates-filter">
                             <label>
-                                <h4>Start Date</h4>
+                                Start Date
                                 <input type="date" name="start_date"  />
                             </label>
                             <label>
-                                <h4>End Date</h4>
+                                End Date
                                 <input type="date" name="start_date"  />
                             </label>
                         </div>
 
-                        <div class="datatable-export-actions">
-                            <button type="button">
-                                CSV
-                            </button>
-                        </div>
-
+                        @auth
+                            <div class="datatable-export-actions">
+                                <button type="button">
+                                    CSV
+                                </button>
+                            </div>
+                        @endauth
                     </div>
-
+                     
                     <table> 
                         <thead>
                             <th>Order Date </th>
@@ -87,6 +101,19 @@
                             <th>Total</th>
                         </thead>
                         <tbody>
+
+                            @foreach ($orders as $order)
+                                <tr>
+                                    <td> {{ $order->created_at  }} </td>
+                                    <td class="bold_td"> {{ substr($order->id, 0, 8)  }} </td>
+                                    <td> {{ $order->customer_id  }} </td>
+                                    <td> {{ $order->payment  }} </td>
+                                    <td> {{ $order->dine  }} </td>
+                                    <td class="bold_td"> {{ $order->status  }} </td>
+                                    <td> {{ $order->cashier  }} </td>
+                                    <td> Kes {{ $order->total  }} </td>
+                                </tr>
+                            @endforeach
 
                         </tbody>
                     </table>

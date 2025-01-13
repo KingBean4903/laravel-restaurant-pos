@@ -12,12 +12,14 @@ class CategoryController extends Controller
 
     function store(Request $request) {
 
-        $request->validate([
-            'title' => 'required|max:255|unique:categories',
-            'description' => 'nullable',
-        ]);
+       
 
         try {
+
+            $request->validate([
+                'title' => 'required|string|max:255|unique:categories',
+                'description' => 'nullable',
+            ]);
 
             Category::create($request->all());
             return response()->json(["Success" => "Category created successfully"], 200);

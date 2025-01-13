@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\Customer;
 use App\Models\User;
 use App\Models\Stock;
+use App\Models\Order;
 use App\Models\StockAudit;
 use Illuminate\Support\Facades\DB;
 
@@ -45,15 +46,27 @@ class DashController extends Controller
         $products = Product::all();
         $customers = Customer::all();
 
+        $productsJoin = DB::table('products')
+            ->join('stocks', 'stocks.product_id',  '=', 'products.id')
+            ->select(
+                'products.title', 'products.price', 'products.uom', 'products.is_menu',
+                'stocks.id', 'stocks.location', 'stocks.product_id', 'stocks.in_stock', 'products.title')
+            ->get();
+
         return view('components.menu-component',
-         ['products' => $products,
+         ['products' => $productsJoin,
           'customers' => $customers,
         ]);
     }
 
     // OrdersIndex:  load orders page
     function ordersIndex() {
-        return view('components.orders-component');
+
+        $orders = Order::all()->reverse();
+
+        return view('components.orders-component', [
+            'orders' => $orders
+        ]);
     }
 
     // ProductsIndex:  load products page

@@ -46,9 +46,9 @@ class OrdersController extends Controller
 
                 $cashier = User::where('pin', $request->cashier)->first();                
 
-                Log::info("Fetched customer" .$customer->names);
 
                 if ($cashier) {
+                    
 
                     $order = Order::create([
                         'customer_id' => $customer->names. " " . "($customer->phone)" ,
@@ -60,7 +60,10 @@ class OrdersController extends Controller
                     ]);
 
                     foreach ($request->items as $item) {
-                        OrderItem::create([
+
+                        
+
+                         OrderItem::create([
                             'order_id' => $order->id,
                             'product_id' => $item['product_id'],
                             'quantity' => $item['quantity'],
@@ -69,13 +72,8 @@ class OrdersController extends Controller
                             'price' => $item['price'],
                         ]);
 
-                        // Update   product inventory
-                        // $product = Product::find($item['product_id']);
-                        // $product->quantity_in_stock -= $item['quantity'];
-                        // $product->save();
-
                         $stock = Stock::where('product_id', $item['product_id'])->first();
-
+                        
                         StockTrxn::create([
                             'stock_before' => $stock->in_stock,
                             'stock_after' => $stock->in_stock -= $item['quantity'],
@@ -94,13 +92,20 @@ class OrdersController extends Controller
                         $stock->save();
                         
                     }
+
+                    return response()
+                            ->json([ 'data' => [ 'Message' =>  'Order created successfully' ] ], 200);
                 }
-                return response()
-                            ->json([ 'Success' =>  'Order created successfully' ], 200);
+                else {
+                    return response()
+                    ->json([ 'data' => ['Message' => 'Cashier does not exist' ] ], 400);
+                }   
+                
 
             } catch(Exception $e) {
+
                 return response()
-                    ->json([ 'Error' => $e->getMessage() ], 500);
+                    ->json([ 'data' => [ 'Message' => $e->getMessage() ] ], 500);
             }
     
     }

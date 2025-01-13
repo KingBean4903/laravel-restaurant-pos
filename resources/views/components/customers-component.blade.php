@@ -96,11 +96,20 @@
                     <li><a href="/">Menu</a></li>
                     <li><a href="/orders">Orders</a></li>
                     <li><a href="/products">Products</a></li>
-                    <li><a href="/customers">Customers</a></li>
+                    <li class="active-li"><a href="/customers">Customers</a></li>
                     <li><a href="/inventory">Inventory</a></li>
                     <li><a href="/users">Users</a></li>
                     <li><a href="/settings">Settings</a></li>
                 </ul>
+
+
+                 @auth
+                    <form action="{{ route('logout') }}" method="POST">
+                        @csrf
+                        <button type="submit">Logout</button>
+                    </form>
+                @endauth
+
             </div>
 
             <div class="dash-body">
@@ -117,13 +126,13 @@
                     <div class="dash-datatable-searchbar">
                         
                         <input type="searh" placeholder="Search...." />
-                        <div class="">
+                        <div class="dates-filter">
                             <label>
-                                <h4>Start Date</h4>
+                                Start Date
                                 <input type="date" name="start_date"  />
                             </label>
                             <label>
-                                <h4>End Date</h4>
+                                End Date
                                 <input type="date" name="start_date"  />
                             </label>
                         </div>
