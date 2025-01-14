@@ -61,7 +61,7 @@ class OrdersController extends Controller
 
                     foreach ($request->items as $item) {
 
-                        
+                    $product = Product::find($item['product_id']);
 
                          OrderItem::create([
                             'order_id' => $order->id,
@@ -73,23 +73,27 @@ class OrdersController extends Controller
                         ]);
 
                         $stock = Stock::where('product_id', $item['product_id'])->first();
-                        
-                        StockTrxn::create([
-                            'stock_before' => $stock->in_stock,
-                            'stock_after' => $stock->in_stock -= $item['quantity'],
-                            'trxn_type' => 'sale',
-                            'reason' => 'sale',
-                            'product_id' => $item['product_id'],
-                            'user' => $cashier->names."/".$cashier->phone,
-                            'ref_code' => $order->id,
-                            'qtty' => $stock->in_stock -= $item['quantity'],
-                            'location_to' => $stock->location,
-                            'location_from' => $stock->location,
-                         ]);
 
+                        if (!$product->is_dish) {
+
+                            StockTrxn::create([
+                                'stock_before' => $stock->in_stock,
+                                'stock_after' => $stock->in_stock -= $item['quantity'],
+                                'trxn_type' => 'sale',
+                                'reason' => 'sale',
+                                'product_id' => $item['product_id'],
+                                'user' => $cashier->names."/".$cashier->phone,
+                                'ref_code' => $order->id,
+                                'qtty' => $stock->in_stock -= $item['quantity'],
+                                'location_to' => $stock->location,
+                                'location_from' => $stock->location,
+                            ]);
+
+                            
+                            $stock->in_stock -= $item['quantity'];
+                            $stock->save();
                         
-                        $stock->in_stock -= $item['quantity'];
-                        $stock->save();
+                        }
                         
                     }
 

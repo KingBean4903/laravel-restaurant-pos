@@ -499,7 +499,6 @@ table tbody tr  td {
 #place-order-btn {
     padding: .875em;
     font-size: .875em;
-    width: 100%;
 }
 
 .active-dine-li {
@@ -624,4 +623,8 @@ table tbody tr:hover {
     display: flex;
     padding: 1em;
     column-gap: 2em;
+}
+
+.dish_btn_inactive {
+    display: none;
 }

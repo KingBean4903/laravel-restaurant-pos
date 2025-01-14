@@ -16,6 +16,7 @@ class Product extends Model
         'department',
         'category',
         'is_menu',
+        'is_dish',
         'opening_stock',
         'price',
     ];

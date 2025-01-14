@@ -84,6 +84,16 @@
                             </label>
                         </div>
 
+                        <div class="radio-box">
+                            <h4>Is Dish</h4>
+                            <label>
+                                <input type="radio" id="is_dish" name="is_dish" value="yes"  /> Yes
+                            </label>
+                            <label>
+                                <input type="radio" id="is_dish" name="is_dish" value="no"  /> No
+                            </label>
+                        </div>
+
                 </div>
 
                 <div class="modal-footer">
@@ -154,6 +164,16 @@
                             </label>
                             <label>
                                 <input type="radio" id="uis_menu" name="uis_menu" value="no"  /> No
+                            </label>
+                        </div>
+
+                        <div class="radio-box">
+                            <h4>Is Dish</h4>
+                            <label>
+                                <input type="radio" id="is_dish" name="uis_dish" value="yes"  /> Yes
+                            </label>
+                            <label>
+                                <input type="radio" id="is_dish" name="uis_dish" value="no"  /> No
                             </label>
                         </div>
 
@@ -242,6 +262,7 @@
                             <th>Department</th>
                             <th>Category</th>
                             <th>Menu</th>
+                            <th>Dish</th>
                             <th>Opening Stock</th>
                             <th></th>
                         </thead>
@@ -255,6 +276,7 @@
                                     <td>{{ $product->department  }}</td>
                                     <td>{{ $product->category  }}</td>
                                     <td>{{ $product->is_menu ? "TRUE" : "FALSE" }}</td>
+                                    <td>{{ $product->is_dish ? "TRUE" : "FALSE" }}</td>
                                     <td>{{ $product->opening_stock  }}</td>
                                     <td>
                                         <button type="button" onclick="openEditModal({{ Js::from($product) }})">Edit</button>
@@ -272,8 +294,6 @@
 
         </div>
 
-
-        
         <script>
             
             const modal = document.getElementById("product-modal");
@@ -348,6 +368,9 @@
                 let isMenu = document.querySelector('input[name="is_menu"]:checked').value;
                 let is_menu = isMenu == "yes" ? true : false;
 
+                let isDish = document.querySelector('input[name="is_dish"]:checked').value;
+                let is_dish = isDish == "yes" ? true : false;
+
                 console.log(is_menu)
 
                 fetch('/product', {
@@ -356,10 +379,10 @@
                         'Content-Type': 'application/json',
                         'X-CSRF-TOKEN': '{{ csrf_token() }}'
                     },
-                    body: JSON.stringify({ title, uom, price, opening_stock, category, department, is_menu })
+                    body: JSON.stringify({ title, uom, price, opening_stock, category, department, is_menu, is_dish })
                 })
                 .then(response =>  {
-                    {{-- window.location.href = '/products';  --}}
+                    window.location.href = '/products';  
                     toggleModal(); })
                 .then(data => {
                     document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
@@ -382,6 +405,9 @@
                 let uisMenu = document.querySelector('input[name="uis_menu"]:checked').value;
                 let uis_menu = uisMenu == "yes" ? true : false;
 
+                let uisDish = document.querySelector('input[name="uis_dish"]:checked').value;
+                let uis_dish = uisDish == "yes" ? true : false;
+
 
                 fetch(`/products/${productId}`, {
                     method: 'PUT',
@@ -395,7 +421,8 @@
                         price : uprice, 
                         category: ucategory, 
                         department: udepartment, 
-                        is_menu: uis_menu 
+                        is_menu: uis_menu,
+                        is_dish: uis_dish,
                     })
                 })
                 .then(response =>  { })
@@ -419,10 +446,13 @@
                         },
                         
                     })
-                    .then(response => {}  )
+                    .then(response => {
+
+                            window.location.href = "/";
+
+                    }  )
                     .then(data => {
                         document.getElementById('response-message').innerHTML = data.message || 'Department created successfully!';
-                        window.location.href = '/settings';
                     })
                     .catch(error => console.error('Error:', error));
 

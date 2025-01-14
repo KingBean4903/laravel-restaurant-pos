@@ -23,6 +23,7 @@ class ProductsController extends Controller
                 'department'=> 'required|string',
                 'opening_stock' => 'required|numeric|integer', 
                 'is_menu' => 'required|boolean',
+                'is_dish' => 'required|boolean',
                 'price' => 'required|integer'
             ]);
 
@@ -33,27 +34,33 @@ class ProductsController extends Controller
                 'department' => $validated['department'],
                 'opening_stock' => $validated['opening_stock'],
                 'is_menu' => $validated['is_menu'],
+                'is_dish' => $validated['is_dish'],
                 'price' => $validated['price']
             ]);
 
-            Stock::create([
-                'location' => $product->department,
-                'status' => 'in_stock',
-                'product_id' => $product->id,
-                'in_stock' => $product->opening_stock,
-            ]);
 
-            StockTrxn::create([
-                'qtty' => $product->opening_stock,
-                'stock_before' => 0,
-                'stock_after' => $product->opening_stock,
-                'reason' => 'opening_stock',
-                'trxn_type' => 'opening_stock',
-                'user' => Auth::user()->id,
-                'product_id' => $product->id,
-                'location_to' => $product->department,
-                'location_from' => $product->department,
-            ]);
+                Stock::create([
+                    'location' => $product->department,
+                    'status' => 'in_stock',
+                    'product_id' => $product->id,
+                    'in_stock' => $product->opening_stock,
+                ]);
+
+                StockTrxn::create([
+                    'qtty' => $product->opening_stock,
+                    'stock_before' => 0,
+                    'stock_after' => $product->opening_stock,
+                    'reason' => 'opening_stock',
+                    'trxn_type' => 'opening_stock',
+                    'user' => Auth::user()->id,
+                    'product_id' => $product->id,
+                    'location_to' => $product->department,
+                    'location_from' => $product->department,
+                ]);
+
+          
+
+            
 
 
             return response()->json(['Success' => 'Product created successfully'], 200);
@@ -75,6 +82,7 @@ class ProductsController extends Controller
                 'category' => 'required|string',
                 'department'=> 'required|string',
                 'is_menu' => 'required|boolean',
+                'is_dish' => 'required|boolean',
                 'price' => 'required|integer'
             ]);
 

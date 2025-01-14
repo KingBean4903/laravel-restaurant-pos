@@ -44,12 +44,12 @@ class DashController extends Controller
     function menuIndex() {
 
         $products = Product::all();
-        $customers = Customer::all();
+        $customers = Customer::all()->unique('names');
 
         $productsJoin = DB::table('products')
             ->join('stocks', 'stocks.product_id',  '=', 'products.id')
             ->select(
-                'products.title', 'products.price', 'products.uom', 'products.is_menu',
+                'products.title', 'products.price', 'products.uom', 'products.is_menu','products.is_dish',
                 'stocks.id', 'stocks.location', 'stocks.product_id', 'stocks.in_stock', 'products.title')
             ->get();
 
@@ -72,7 +72,7 @@ class DashController extends Controller
     // ProductsIndex:  load products page
     function productsIndex() {
         
-        $categories = Category::all();
+        $categories = Category::all()->unique('title');
         $departments = Department::all();
         $products = Product::all();
 

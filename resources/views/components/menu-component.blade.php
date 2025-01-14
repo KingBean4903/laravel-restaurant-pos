@@ -71,7 +71,7 @@
 
                 <div class="modal-footer">
                     <button class="" onclick="toggleModal()">Cancel</button>
-                    <button onclick="placeOrder()" id="place-order-btn" >Submit</button>
+                    <button onclick="placeOrder()" id="submit-order-btn" >Submit</button>
                 </div>
 
             </div>
@@ -176,7 +176,6 @@
                             <select id="customer">
                             @foreach ($customers as $customer)
                                         <option value="{{ $customer->phone }}"> {{ $customer->names  }} </option>
-                                        <option value="{{ $customer->phone }}"> {{ $customer->names }} </option>
                             @endforeach
                             </select>
                         </div>`;
@@ -331,35 +330,37 @@
                 })
 
                 meals.forEach((one, idx) => {
-                    const card = document.createElement('div');
-                    card.classList.add("meals-card");
+                    if (one.is_menu) {
+                        console.log("DIhs",  one)
+                        const card = document.createElement('div');
+                        card.classList.add("meals-card");
 
-                    const banner = document.createElement('img');
-                    banner.src = ``;
-                    banner.classList.add("meal-banner")
-                    
-                    const title = document.createElement("h3");
-                    title.innerText = one.title;
+                        const banner = document.createElement('img');
+                        banner.src = ``;
+                        banner.classList.add("meal-banner")
+                        
+                        const title = document.createElement("h3");
+                        title.innerText = one.title;
 
-                    const price = document.createElement("h4");
-                    price.innerText = `Kes ${one.price}`;
+                        const price = document.createElement("h4");
+                        price.innerText = `Kes ${one.price}`;
 
-                    const button = document.createElement("button");
-                    button.innerText = "Add to Dish";
+                        const button = document.createElement("button");
+                        button.innerText = "Add to Dish";
 
-                    button.disabled  = one.in_stock <= 0 ? true : false;
 
-                    button.classList.add(one.in_stock <= 0 ? "hidden" : "filled-button")
-                    button.addEventListener("click", function() {
-                        addToCart(one.id);
-                    });
+                        button.classList.add((one.in_stock <= 0 && !one.is_dish) ? "dish_btn_inactive" : "filled-button");
 
-                    card.appendChild(banner);                
-                    card.appendChild(title);
-                    card.appendChild(price);
-                    card.appendChild(button); 
-
-                    dishesDiv.appendChild(card);     
+                        button.addEventListener("click", function() {
+                            addToCart(one.product_id);
+                        });
+                        
+                        card.appendChild(banner);                
+                        card.appendChild(title);
+                        card.appendChild(price);
+                        card.appendChild(button); 
+                        dishesDiv.appendChild(card);   
+                    }  
                 });
 
 
@@ -412,16 +413,23 @@
 
                     if (cartId == product.id) {
 
-                        if (cart[index].quantity < product.in_stock) {
-                        cart[index].quantity += 1; // Increase the quantity by 1
-                        // Save the updated cart to localStorage
-                        localStorage.setItem('cart', JSON.stringify(cart));
-                        // Refresh the cart display
-                        displayCart();
-                        } else {
+                        if (cart[index].quantity < product.in_stock && !product.is_dish) {
+                            cart[index].quantity += 1; // Increase the quantity by 1
+                            // Save the updated cart to localStorage
+                            localStorage.setItem('cart', JSON.stringify(cart));
+                            // Refresh the cart display
+                            displayCart();
+                        } else if(product.is_dish) 
+                            cart[index].quantity += 1; // Increase the quantity by 1
+                            // Save the updated cart to localStorage
+                            localStorage.setItem('cart', JSON.stringify(cart));
+                            // Refresh the cart display
+                            displayCart();
+                        }
+                         else {
                             alert("Product max reached")
                         }
-                    }
+                    
                 }
 
                 // Function to decrement item quantity in the cart
@@ -447,15 +455,23 @@
 
                 function addToCart(id) {
 
-                    const dish = meals.filter(one => one.id == id)[0];
+                    const dish = meals.filter(one => one.product_id == id)[0];
 
                     const existingItemIndex = cart.findIndex(item => item.name === dish.title);
 
                     if (existingItemIndex !== -1) {
-                        if (cart[existingItemIndex].quantity < dish.in_stock) {
+
+                        if (cart[existingItemIndex].quantity < dish.in_stock && dish.is_menu) {
+
                             cart[existingItemIndex].quantity += 1;
-                        } 
+                       
+                        } else {
+
+                            cart[existingItemIndex].quantity += 1;
+                        }
+
                     } else {
+
                         cart.push({ product_id: id,  name: dish.title, price: parseInt(dish.price), quantity: 1 });
                     }
                     localStorage.setItem('cart', JSON.stringify(cart));
@@ -469,7 +485,7 @@
 
             function placeOrder() {
 
-                const btnPlaceOrder = document.getElementById("place-order-btn");
+                const btnPlaceOrder = document.getElementById("submit-order-btn");
 
                 const cashier = document.getElementById("cashier").value;
                 const customer = (null != document.getElementById("customer")) ?  document.getElementById("customer").value : " ";
@@ -516,9 +532,9 @@
 
                         btnPlaceOrder.disabled = false;
 
-                        window.location.href = "/";
+                       
                 })
-                .catch(error => {console.error('Error:', error); alert(error)});
+                .catch(error => {console.error('Error:', error); alert("Failed to create order")});
 
             } 
         </script>
