@@ -12,7 +12,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::create('stocks', function (Blueprint $table) {
-            $table->string('id');
+            $table->string('id')->primary();
             $table->integer('in_stock');
             $table->string('location');
             $table->enum('status', ['in_stock','out_of_stock','reserved']);

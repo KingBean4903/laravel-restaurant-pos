@@ -13,8 +13,7 @@ return new class extends Migration
     {
         Schema::table('users', function (Blueprint $table) {
             //
-            $table->dropColumn('id');
-            $table->string('id')->primary();
+            $table->string('phone')->nullable()->change();
         });
     }
 
